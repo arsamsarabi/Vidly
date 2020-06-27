@@ -7,27 +7,27 @@ app.use(express.json())
 
 const { PORT = 4200 }: { PORT?: number } = process.env
 
-type Person = {
+type Genre = {
   id: number
   name: string
 }
 
-const people: Person[] = [
+const genres: Genre[] = [
   {
     id: 1,
-    name: 'Arsam',
+    name: 'Comedy',
   },
   {
     id: 2,
-    name: 'Dina',
+    name: 'Sci-Fi',
   },
   {
     id: 3,
-    name: 'Kush',
+    name: 'Action',
   },
   {
     id: 4,
-    name: 'Ardi',
+    name: 'Thriller',
   },
 ]
 
@@ -35,72 +35,73 @@ app.get('/', (req, res) => {
   res.send(JSON.stringify({ Hello: 'World!' }))
 })
 
-app.get('/api/people', (req, res) => {
-  res.send(people)
+app.get('/api/genres', (req, res) => {
+  res.send(genres)
 })
 
-app.get('/api/person/:id', (req, res) => {
-  const person = people.find((p) => p.id === parseInt(req.params.id))
-  if (!person) res.status(404).send('Person not found!')
-  res.send(person)
+app.get('/api/genre/:id', (req, res) => {
+  const id = parseInt(req.params.id)
+  const genre: Genre | undefined = genres.find((g: Genre) => g.id === id)
+  if (!genre) res.status(404).send('Genre not found!')
+  res.send(genre)
 })
 
-app.post('/api/people', (req, res) => {
+app.post('/api/genres', (req, res) => {
   const { name } = req.body
 
-  const person = {
-    id: people.length + 1,
+  const genre: Genre = {
+    id: genres.length + 1,
     name,
   }
 
-  const { error } = validatePerson(person)
+  const { error } = validateGenre(genre)
   if (error) return res.status(400).send(error.details.map((e) => e.message))
 
-  people.push(person)
+  genres.push(genre)
 
-  return res.status(200).send(`Person ${person.id} added!`)
+  return res.status(200).send(`Genre ${genre.id} added!`)
 })
 
-app.put('/api/person/:id', (req, res) => {
-  const { id } = req.params
+app.put('/api/genre/:id', (req, res) => {
+  const id = parseInt(req.params.id)
   const { name } = req.body
 
-  const person = people.find((p) => p.id === parseInt(id))
-  if (!person) return res.status(400).send('Person not found!')
+  const genre = genres.find((g: Genre) => g.id === id)
+  if (!genre) return res.status(400).send('Genre not found!')
 
-  const newPerson = {
-    id: person.id,
+  const newGenre = {
+    id: genre.id,
     name,
   }
 
-  const { error } = validatePerson(newPerson)
+  const { error } = validateGenre(newGenre)
   if (error) return res.status(400).send(error.details.map((e) => e.message))
 
-  person.name = newPerson.name
+  genre.name = newGenre.name
 
-  return res.status(200).send(newPerson)
+  return res.status(200).send(newGenre)
 })
 
-app.delete('/api/person/:id', (req, res) => {
-  const { id } = req.params
-  const person = people.find((p) => p.id === parseInt(id))
-  if (!person) return res.status(400).send('Person not found!')
+app.delete('/api/genre/:id', (req, res) => {
+  const id = parseInt(req.params.id)
+  const genre = genres.find((p) => p.id === id)
+  if (!genre) return res.status(400).send('Genre not found!')
 
-  const index = people.indexOf(person)
-  people.splice(index, 1)
+  const index = genres.indexOf(genre)
+  genres.splice(index, 1)
 
-  return res.status(200).send(person)
+  return res.status(200).send(genre)
 })
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server listening on port: ${PORT}`)
 })
 
-const validatePerson = (person: Person) => {
+const validateGenre = (genre: Genre) => {
   const schema = Joi.object({
     id: Joi.number().required(),
     name: Joi.string().min(3).required(),
   })
-  const { error, value } = schema.validate(person)
+  const { error, value } = schema.validate(genre)
   return { error, value }
 }

@@ -1,7 +1,7 @@
 {
-  "name": "express-boiler",
-  "version": "1.0.0",
-  "main": "index.js",
+  "name": "vidly",
+  "version": "0.0.1",
+  "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
     "dev": "nodemon src/index.ts",
