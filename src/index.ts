@@ -1,6 +1,8 @@
 import express from 'express'
 import Joi from '@hapi/joi'
 
+import { Person } from './types'
+
 const app = express()
 
 app.use(express.json())
@@ -34,18 +36,19 @@ app.get('/api/people', (req, res) => {
   res.send(people)
 })
 
-app.post('/api/people', (req, res) => {
-  const schema = Joi.object({
-    id: Joi.number().required(),
-    name: Joi.string().min(3).required(),
-  })
+app.get('/api/person/:id', (req, res) => {
+  const person = people.find((p) => p.id === parseInt(req.params.id))
+  if (!person) res.status(404).send('Person not found!')
+  res.send(person)
+})
 
+app.post('/api/people', (req, res) => {
   const person = {
     id: people.length + 1,
     name: req.body.name,
   }
 
-  const { error } = schema.validate(person)
+  const { error } = validatePerson(person)
 
   if (error) return res.status(400).send(error.details.map((e) => e.message))
 
@@ -54,12 +57,36 @@ app.post('/api/people', (req, res) => {
   return res.status(200).send(`Person ${person.id} added!`)
 })
 
-app.get('/api/person/:id', (req, res) => {
-  const person = people.find((p) => p.id === parseInt(req.params.id))
-  if (!person) res.status(404).send('Person not found!')
-  res.send(person)
+app.put('/api/person/:id', (req, res) => {
+  const { id } = req.params
+
+  const person = people.find((p) => p.id === parseInt(id))
+
+  if (!person) return res.status(400).send('Person not found!')
+
+  const newPerson = {
+    id: person.id,
+    name: req.body.name,
+  }
+
+  const { error } = validatePerson(newPerson)
+
+  if (error) return res.status(400).send(error.details.map((e) => e.message))
+
+  person.name = newPerson.name
+
+  return res.status(200).send(newPerson)
 })
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server listening on port: ${PORT}`)
 })
+
+const validatePerson = (person: Person) => {
+  const schema = Joi.object({
+    id: Joi.number().required(),
+    name: Joi.string().min(3).required(),
+  })
+  const { error, value } = schema.validate(person)
+  return { error, value }
+}
