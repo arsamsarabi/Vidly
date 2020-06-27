@@ -7,6 +7,9 @@ import logger from './middlewares/logger'
 const app = express()
 
 app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use(express.static('public'))
+
 app.use(auth)
 app.use(logger)
 
@@ -37,10 +40,11 @@ const genres: Genre[] = [
 ]
 
 app.get('/', (req, res) => {
-  res.send(JSON.stringify({ Hello: 'World!' }))
+  res.send('index.html')
 })
 
 app.get('/api/genres', (req, res) => {
+  console.log(req.query)
   res.send(genres)
 })
 
