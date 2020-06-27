@@ -1,5 +1,6 @@
 {
   "name": "Vidly - Development",
+  "port": 4200,
   "mail": {
     "host": "development-mail-server"
   }

@@ -9,15 +9,8 @@ import logger from './middlewares/logger'
 
 const app = express()
 
-type EnvironmentVariables = {
-  PORT?: number
-  NODE_ENV?: string
-}
-
-const {
-  PORT = 4200,
-  NODE_ENV = 'development',
-}: EnvironmentVariables = process.env
+const { NODE_ENV = 'development' } = process.env
+const port: number = config.get('port')
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -121,8 +114,8 @@ app.delete('/api/genre/:id', (req, res) => {
   return res.status(200).send(genre)
 })
 
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server listening on port ${PORT}`)
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server listening on port ${port}`)
 })
 
 const validateGenre = (genre: Genre) => {

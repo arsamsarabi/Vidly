@@ -1,4 +1,5 @@
 {
+  "port": 8080,
   "mail": {
     "host": "prod-mail-server"
   }
