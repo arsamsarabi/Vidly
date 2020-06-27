@@ -5,6 +5,7 @@
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
+    "allowJs": true,
     "outDir": "./dist",
     "removeComments": true,
     "strict": true,
@@ -15,8 +16,10 @@
     "noFallthroughCasesInSwitch": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
-  },
-  "include": ["src/**/*.ts", "./typings/*"],
-  "exclude": ["node_modules", ".vscode", "dist"]
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": ".",
+    "paths": {
+      "#root/*": ["./src/*"]
+    }
+  }
 }

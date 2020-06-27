@@ -33,6 +33,7 @@ app.use(logger)
 // Configuration
 console.log(`Application name: ${config.get('name')}`)
 console.log(`Mail Server: ${config.get('mail.host')}`)
+console.log(`Mail password: ${config.get('mail.password')}`)
 
 type Genre = {
   id: number
