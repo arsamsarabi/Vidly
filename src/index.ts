@@ -1,15 +1,18 @@
 import express from 'express'
 import Joi from '@hapi/joi'
 
-import { Person } from './types'
-
 const app = express()
 
 app.use(express.json())
 
 const { PORT = 4200 }: { PORT?: number } = process.env
 
-const people = [
+type Person = {
+  id: number
+  name: string
+}
+
+const people: Person[] = [
   {
     id: 1,
     name: 'Arsam',
