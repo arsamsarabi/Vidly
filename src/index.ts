@@ -43,13 +43,14 @@ app.get('/api/person/:id', (req, res) => {
 })
 
 app.post('/api/people', (req, res) => {
+  const { name } = req.body
+
   const person = {
     id: people.length + 1,
-    name: req.body.name,
+    name,
   }
 
   const { error } = validatePerson(person)
-
   if (error) return res.status(400).send(error.details.map((e) => e.message))
 
   people.push(person)
@@ -59,23 +60,33 @@ app.post('/api/people', (req, res) => {
 
 app.put('/api/person/:id', (req, res) => {
   const { id } = req.params
+  const { name } = req.body
 
   const person = people.find((p) => p.id === parseInt(id))
-
   if (!person) return res.status(400).send('Person not found!')
 
   const newPerson = {
     id: person.id,
-    name: req.body.name,
+    name,
   }
 
   const { error } = validatePerson(newPerson)
-
   if (error) return res.status(400).send(error.details.map((e) => e.message))
 
   person.name = newPerson.name
 
   return res.status(200).send(newPerson)
+})
+
+app.delete('/api/person/:id', (req, res) => {
+  const { id } = req.params
+  const person = people.find((p) => p.id === parseInt(id))
+  if (!person) return res.status(400).send('Person not found!')
+
+  const index = people.indexOf(person)
+  people.splice(index, 1)
+
+  return res.status(200).send(person)
 })
 
 app.listen(PORT, '0.0.0.0', () => {
