@@ -2,12 +2,12 @@
   "verbose": true,
   "restartable": "rs",
   "watch": ["src"],
-  "ignore": [".git", "node_modules/**/node_modules"],
+  "ignore": [".git", "node_modules", "**/*.test.ts", "**/*.spec.ts"],
   "execMap": {
-    "js": "node --harmony"
+    "ts": "node --inspect=5858 -r ts-node/register ./src/index.ts"
   },
   "env": {
     "NODE_ENV": "development"
   },
-  "ext": "js,json"
+  "ext": "ts, json"
 }
