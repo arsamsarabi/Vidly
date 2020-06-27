@@ -6,7 +6,8 @@
   "scripts": {
     "serve": "NODE_ENV=production node dist/index.js",
     "dev": "DEBUG=app:* ts-node-dev --respawn index.dev.ts",
-    "build": "tsc"
+    "build": "yarn clean && tsc",
+    "clean": "rimraf dist"
   },
   "dependencies": {
     "@hapi/joi": "^17.1.1",
@@ -33,6 +34,7 @@
     "eslint": "^7.3.1",
     "module-alias": "^2.2.2",
     "prettier": "^2.0.5",
+    "rimraf": "^3.0.2",
     "ts-node-dev": "^1.0.0-pre.49",
     "typescript": "^3.9.5"
   },
