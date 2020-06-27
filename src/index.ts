@@ -1,4 +1,5 @@
 import express from 'express'
+import Joi from '@hapi/joi'
 
 const app = express()
 
@@ -34,20 +35,23 @@ app.get('/api/people', (req, res) => {
 })
 
 app.post('/api/people', (req, res) => {
-  if (!req.body.name || req.body.name.length < 3) {
-    res
-      .status(400)
-      .send('Error! Name is required and should be minimum 3 characters')
-  }
+  const schema = Joi.object({
+    id: Joi.number().required(),
+    name: Joi.string().min(3).required(),
+  })
 
   const person = {
     id: people.length + 1,
     name: req.body.name,
   }
 
+  const { error } = schema.validate(person)
+
+  if (error) return res.status(400).send(error.details.map((e) => e.message))
+
   people.push(person)
 
-  res.status(200).send(`Person ${person.id} added!`)
+  return res.status(200).send(`Person ${person.id} added!`)
 })
 
 app.get('/api/person/:id', (req, res) => {
