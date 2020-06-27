@@ -1,3 +1,4 @@
+import './db/connection'
 import express from 'express'
 import helmet from 'helmet'
 import morgan from 'morgan'

@@ -2,5 +2,8 @@
   "port": 8080,
   "mail": {
     "host": "prod-mail-server"
+  },
+  "db": {
+    "url": "mongodb://localhost:27017/vidly"
   }
 }
