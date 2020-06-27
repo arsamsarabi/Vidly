@@ -8,15 +8,26 @@ import logger from './middlewares/logger'
 
 const app = express()
 
+type EnvironmentVariables = {
+  PORT?: number
+  NODE_ENV?: string
+}
+
+const {
+  PORT = 4200,
+  NODE_ENV = 'development',
+}: EnvironmentVariables = process.env
+
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static('public'))
 app.use(helmet())
-app.use(morgan('combined'))
+if (NODE_ENV === 'development') {
+  console.log('Morgan enabled...')
+  app.use(morgan('combined'))
+}
 app.use(auth)
 app.use(logger)
-
-const { PORT = 4200 }: { PORT?: number } = process.env
 
 type Genre = {
   id: number
@@ -105,7 +116,7 @@ app.delete('/api/genre/:id', (req, res) => {
 })
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server listening on port: ${PORT}`)
+  console.log(`Server listening on port ${PORT}`)
 })
 
 const validateGenre = (genre: Genre) => {
