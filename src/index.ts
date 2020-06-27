@@ -6,6 +6,7 @@ import config from 'config'
 
 import auth from './middlewares/auth'
 import logger from './middlewares/logger'
+import { appDebugger as log } from './utils/debuggers'
 
 const app = express()
 
@@ -17,16 +18,16 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static('public'))
 app.use(helmet())
 if (NODE_ENV === 'development') {
-  console.log('Morgan enabled...')
+  log('Morgan enabled...')
   app.use(morgan('combined'))
 }
 app.use(auth)
 app.use(logger)
 
 // Configuration
-console.log(`Application name: ${config.get('name')}`)
-console.log(`Mail Server: ${config.get('mail.host')}`)
-console.log(`Mail password: ${config.get('mail.password')}`)
+log(`Application name: ${config.get('name')}`)
+log(`Mail Server: ${config.get('mail.host')}`)
+log(`Mail password: ${config.get('mail.password')}`)
 
 type Genre = {
   id: number
