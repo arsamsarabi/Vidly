@@ -1,9 +1,14 @@
 import express from 'express'
 import Joi from '@hapi/joi'
 
+import auth from './middlewares/auth'
+import logger from './middlewares/logger'
+
 const app = express()
 
 app.use(express.json())
+app.use(auth)
+app.use(logger)
 
 const { PORT = 4200 }: { PORT?: number } = process.env
 
