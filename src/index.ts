@@ -1,5 +1,7 @@
 import express from 'express'
 import Joi from '@hapi/joi'
+import helmet from 'helmet'
+import morgan from 'morgan'
 
 import auth from './middlewares/auth'
 import logger from './middlewares/logger'
@@ -9,7 +11,8 @@ const app = express()
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(express.static('public'))
-
+app.use(helmet())
+app.use(morgan('combined'))
 app.use(auth)
 app.use(logger)
 
@@ -44,7 +47,6 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/genres', (req, res) => {
-  console.log(req.query)
   res.send(genres)
 })
 
