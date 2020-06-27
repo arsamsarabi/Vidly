@@ -2,6 +2,7 @@ import express from 'express'
 import Joi from '@hapi/joi'
 import helmet from 'helmet'
 import morgan from 'morgan'
+import config from 'config'
 
 import auth from './middlewares/auth'
 import logger from './middlewares/logger'
@@ -28,6 +29,10 @@ if (NODE_ENV === 'development') {
 }
 app.use(auth)
 app.use(logger)
+
+// Configuration
+console.log(`Application name: ${config.get('name')}`)
+console.log(`Mail Server: ${config.get('mail.host')}`)
 
 type Genre = {
   id: number
