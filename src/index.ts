@@ -8,10 +8,13 @@ import auth from './middlewares/auth'
 import logger from './middlewares/logger'
 import { appDebugger as log } from './utils/debuggers'
 
-const app = express()
-
 const { NODE_ENV = 'development' } = process.env
 const port: number = config.get('port')
+
+const app = express()
+
+app.set('view engine', 'pug')
+app.set('views', './views') // default path
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
@@ -54,7 +57,7 @@ const genres: Genre[] = [
 ]
 
 app.get('/', (req, res) => {
-  res.send('index.html')
+  res.render('index', { title: 'Vidly', message: 'Hello World!' })
 })
 
 app.get('/api/genres', (req, res) => {
