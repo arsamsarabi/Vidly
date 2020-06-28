@@ -11,7 +11,7 @@ const genreSchema: Schema = new Schema(
       unique: true,
       required: true,
       minlength: 3,
-      maxlength: 255,
+      maxlength: 50,
       trim: true,
       // lowercase: true,
       // uppercase: true,

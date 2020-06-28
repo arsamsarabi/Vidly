@@ -3,13 +3,12 @@ import config from 'config'
 
 import { dbDebugger as log } from '../utils/debuggers'
 
+const dbUrl: string = config.get('db.url')
 const mongooseConfig = {
   useUnifiedTopology: true,
   useNewUrlParser: true,
   useCreateIndex: true,
 }
-
-const dbUrl: string = config.get('db.url')
 
 mongoose
   .connect(dbUrl, mongooseConfig)
