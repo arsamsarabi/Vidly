@@ -23,7 +23,7 @@ app.use(express.static('public'))
 app.use(helmet())
 if (NODE_ENV === 'development') {
   log('Morgan enabled...')
-  app.use(morgan('combined'))
+  app.use(morgan('tiny'))
 }
 app.use(auth)
 app.use(logger)

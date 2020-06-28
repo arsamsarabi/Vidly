@@ -4,6 +4,6 @@ import genres from './genres'
 
 const router = express.Router()
 
-router.use('/genres', genres)
+router.use('/genre', genres)
 
 export default router

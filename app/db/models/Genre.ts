@@ -1,6 +1,10 @@
-import { Schema, model } from 'mongoose'
+import { Schema, model, Document } from 'mongoose'
 
-const genreSchema = new Schema(
+export interface IGenre extends Document {
+  name: string
+}
+
+const genreSchema: Schema = new Schema(
   {
     name: {
       type: String,
@@ -8,6 +12,9 @@ const genreSchema = new Schema(
       required: true,
       minlength: 3,
       maxlength: 255,
+      trim: true,
+      // lowercase: true,
+      // uppercase: true,
       // match: /pattern/
       // enum: ['sci-fi', 'comedy', 'thriller']
       // min & max for numbers
@@ -25,6 +32,8 @@ const genreSchema = new Schema(
       //   },
       //   message: 'Error message',
       // },
+      // get: (value: number) => Math.round(value),
+      // set: (value: number) => Math.round(value)
     },
   },
   {
@@ -32,6 +41,6 @@ const genreSchema = new Schema(
   }
 )
 
-const Genre = model('Genre', genreSchema)
+const Genre = model<IGenre>('Genre', genreSchema)
 
 export default Genre

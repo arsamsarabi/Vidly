@@ -1,94 +1,81 @@
 import express from 'express'
 import Joi from '@hapi/joi'
 
+import Genre, { IGenre } from '#root/db/models/Genre'
+import { apiDebugger as log } from '#root/utils/debuggers'
+
 const router = express.Router()
 
-type Genre = {
-  id: number
-  name: string
-}
-
-const genres: Genre[] = [
-  {
-    id: 1,
-    name: 'Comedy',
-  },
-  {
-    id: 2,
-    name: 'Sci-Fi',
-  },
-  {
-    id: 3,
-    name: 'Action',
-  },
-  {
-    id: 4,
-    name: 'Thriller',
-  },
-]
-
-router.get('/', (req, res) => {
-  res.send(genres)
-})
-
-router.get('/api/genre/:id', (req, res) => {
-  const id = parseInt(req.params.id)
-  const genre: Genre | undefined = genres.find((g: Genre) => g.id === id)
-  if (!genre) res.status(404).send('Genre not found!')
-  res.send(genre)
-})
-
-router.post('/', (req, res) => {
-  const { name } = req.body
-
-  const genre: Genre = {
-    id: genres.length + 1,
-    name,
+router.get('/', async (req, res) => {
+  try {
+    const genres = await Genre.find()
+    res.send(genres)
+  } catch (error) {
+    res.status(500).send(error)
   }
-
-  const { error } = validateGenre(genre)
-  if (error) return res.status(400).send(error.details.map((e) => e.message))
-
-  genres.push(genre)
-
-  return res.status(200).send(`Genre ${genre.id} added!`)
 })
 
-router.put('/:id', (req, res) => {
-  const id = parseInt(req.params.id)
-  const { name } = req.body
-
-  const genre = genres.find((g: Genre) => g.id === id)
-  if (!genre) return res.status(400).send('Genre not found!')
-
-  const newGenre = {
-    id: genre.id,
-    name,
+router.get('/:id', async (req, res) => {
+  const id = req.params.id
+  try {
+    const genre = await Genre.findById(id)
+    res.send(genre)
+  } catch (error) {
+    log(error)
+    res.status(500).send(error)
   }
+})
+
+router.post('/', async (req, res) => {
+  const { name } = req.body
+  const newGenre = { name }
 
   const { error } = validateGenre(newGenre)
   if (error) return res.status(400).send(error.details.map((e) => e.message))
 
-  genre.name = newGenre.name
+  try {
+    const genre = new Genre(newGenre)
+    const result: IGenre = await genre.save()
+    return res.status(200).send(`Genre ${result.name} added!`)
+  } catch (error) {
+    log(error)
+    return res.status(500).send(error)
+  }
+})
 
-  return res.status(200).send(newGenre)
+router.put('/:id', async (req, res) => {
+  const id = req.params.id
+  const { name } = req.body
+  const newGenre = { name }
+
+  const { error } = validateGenre(newGenre)
+  if (error) return res.status(400).send(error.details.map((e) => e.message))
+
+  try {
+    const result = Genre.findOneAndUpdate({ id }, { name }, { new: true })
+    log(result)
+    return res.status(200).send(`Genre ${result} updated!`)
+  } catch (error) {
+    log(error)
+    return res.status(500).send(error)
+  }
 })
 
 router.delete('/:id', (req, res) => {
-  const id = parseInt(req.params.id)
-  const genre = genres.find((p) => p.id === id)
-  if (!genre) return res.status(400).send('Genre not found!')
+  const id = req.params.id
 
-  const index = genres.indexOf(genre)
-  genres.splice(index, 1)
-
-  return res.status(200).send(genre)
+  try {
+    const result = Genre.findByIdAndRemove({ id })
+    return res.status(200).send(`Genre ${result} deleted!`)
+  } catch (error) {
+    log(error)
+    return res.status(500).send(error)
+  }
 })
 
-const validateGenre = (genre: Genre) => {
+const validateGenre = (genre: any) => {
   const schema = Joi.object({
-    id: Joi.number().required(),
-    name: Joi.string().min(3).required(),
+    name: Joi.string().min(3).max(255).required(),
   })
   const { error, value } = schema.validate(genre)
   return { error, value }

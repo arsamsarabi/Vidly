@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "serve": "NODE_ENV=production node dist/index.js",
-    "dev": "DEBUG=app:* ts-node-dev --respawn index.dev.ts",
+    "dev": "DEBUG=app:api ts-node-dev --respawn index.dev.ts",
     "build": "yarn clean && tsc",
     "clean": "rimraf dist"
   },
@@ -41,6 +41,6 @@
     "typescript": "^3.9.5"
   },
   "_moduleAliases": {
-    "#root": "./src"
+    "#root": "./app"
   }
 }
