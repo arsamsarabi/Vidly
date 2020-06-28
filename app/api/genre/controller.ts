@@ -11,12 +11,12 @@ const createGenre = async (genre: { name: string }) => {
 }
 
 const updateGenre = async (id: string, genre: { name: string }) => {
-  const result = await Genre.findOneAndUpdate({ id }, genre, { new: true })
+  const result = await Genre.findByIdAndUpdate(id, genre, { new: true })
   return result
 }
 
 const deleteGenre = async (id: string) => {
-  const result = Genre.findByIdAndRemove({ id })
+  const result = await Genre.findByIdAndRemove(id)
   return result
 }
 

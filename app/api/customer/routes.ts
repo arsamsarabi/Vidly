@@ -1,36 +1,36 @@
 import express from 'express'
 
-import validateGenre from './validation'
+import validateCustomer from './validation'
 import controller from './controller'
 import parseError from './errorHandler'
 
 const router = express.Router()
 
 router.get('/', async (req, res) => {
-  const genres = await controller.getAllGenres()
-  res.send(genres)
+  const customers = await controller.getAllCustomers()
+  res.send(customers)
 })
 
 router.get('/:id', async (req, res) => {
   const id = req.params.id
-  const genre = await controller.getGenreById(id)
+  const customer = await controller.getCustomerById(id)
 
-  if (!genre)
-    return res.status(404).send(`Could not find a genre with the ID ${id}`)
+  if (!customer)
+    return res.status(404).send(`Could not find a customer with the ID ${id}`)
 
-  return res.send(genre)
+  return res.send(customer)
 })
 
 router.post('/', async (req, res) => {
-  const { name } = req.body
-  const newGenre = { name }
+  const { name, phone, isGold } = req.body
+  const newCustomer = { name, phone, isGold }
 
-  const { error } = validateGenre(newGenre)
+  const { error } = validateCustomer(newCustomer)
   if (error) return res.status(400).send(error.details.map((e) => e.message))
 
   try {
-    const result = await controller.createGenre(newGenre)
-    return res.status(200).send(`Genre ${result.name} added!`)
+    const result = await controller.createCustomer(newCustomer)
+    return res.status(200).send(`Customer ${result.name} added!`)
   } catch (error) {
     const { code, message } = parseError(error)
     return res.status(code).send(message)
@@ -39,15 +39,15 @@ router.post('/', async (req, res) => {
 
 router.put('/:id', async (req, res) => {
   const id = req.params.id
-  const { name } = req.body
-  const newGenre = { name }
+  const { name, phone, isGold } = req.body
+  const newCustomer = { name, phone, isGold }
 
-  const { error } = validateGenre(newGenre)
+  const { error } = validateCustomer(newCustomer)
   if (error) return res.status(400).send(error.details.map((e) => e.message))
 
   try {
-    const result = await controller.updateGenre(id, newGenre)
-    return res.status(200).send(`Genre ${result?.name} updated!`)
+    const result = await controller.updateCustomer(id, newCustomer)
+    return res.status(200).send(`Customer ${result?.name} updated!`)
   } catch (error) {
     const { code, message } = parseError(error)
     return res.status(code).send(message)
@@ -58,8 +58,8 @@ router.delete('/:id', async (req, res) => {
   const id = req.params.id
 
   try {
-    const result = await controller.deleteGenre(id)
-    return res.status(200).send(`Genre ${result?.name} deleted!`)
+    const result = await controller.deleteCustomer(id)
+    return res.status(200).send(`Customer ${result?.name} deleted!`)
   } catch (error) {
     const { code, message } = parseError(error)
     return res.status(code).send(message)
