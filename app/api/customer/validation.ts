@@ -5,8 +5,8 @@ import { ICustomer } from '#root/db/models/Customer'
 const validateCustomer = (customer: Partial<ICustomer>) => {
   const schema = Joi.object({
     name: Joi.string().min(3).max(50).required(),
-    phone: Joi.string().min(6).max(50),
-    isGold: Joi.bool(),
+    phone: Joi.string().min(6).max(50).required(),
+    isGold: Joi.boolean(),
   })
   const { error, value } = schema.validate(customer)
   return { error, value }

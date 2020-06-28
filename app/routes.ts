@@ -5,7 +5,7 @@ import api from './api'
 const router = express.Router()
 
 router.get('/', (req, res) => {
-  res.render('index', { title: 'Vidly', message: 'Hello World!' })
+  res.render('index', { title: 'Vidly', message: 'Hello World 👋🏻🌍!' })
 })
 
 router.use('/api', api)
