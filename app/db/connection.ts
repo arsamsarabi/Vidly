@@ -8,6 +8,7 @@ const mongooseConfig = {
   useUnifiedTopology: true,
   useNewUrlParser: true,
   useCreateIndex: true,
+  useFindAndModify: false,
 }
 
 mongoose

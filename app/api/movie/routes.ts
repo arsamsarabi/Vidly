@@ -1,17 +1,21 @@
-import express from 'express'
+import express, { Request, Response } from 'express'
 
-import validateMovie from './validation'
+import { apiDebugger as log } from '#root/utils/debuggers'
 import controller from './controller'
-import Genre from '#root/db/models/Genre'
+import {
+  transformGenres,
+  validateMovie,
+  buildMovieObjectToPost,
+} from './middlewares'
 
 const router = express.Router()
 
-router.get('/', async (req, res) => {
+router.get('/', async (_: Request, res: Response) => {
   const movies = await controller.getAllMovies()
   res.send(movies)
 })
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req: Request, res: Response) => {
   const id = req.params.id
   const movie = await controller.getMovieById(id)
 
@@ -21,73 +25,35 @@ router.get('/:id', async (req, res) => {
   return res.send(movie)
 })
 
-router.post('/', async (req, res) => {
-  const { error } = validateMovie(req.body)
-  if (error) return res.status(400).send(error.details.map((e) => e.message))
-
-  let genres = []
-
-  try {
-    genres = await Genre.find({
-      _id: { $in: req.body.genreIds },
-    }).select('_id name')
-
-    if (!genres || genres.length !== req.body.genreIds.length)
-      return res.status(400).send('Invalid genre')
-  } catch (error) {
-    return res.status(400).send('Invalid genre')
+router.post(
+  '/',
+  [validateMovie, transformGenres, buildMovieObjectToPost],
+  async (req: Request, res: Response) => {
+    try {
+      const result = await controller.createMovie(req.body.movie)
+      return res.status(200).send(`Movie ${result.title} added!`)
+    } catch (error) {
+      log(error.message)
+      return res.status(500).send('Unknown error')
+    }
   }
+)
 
-  const newMovie = {
-    title: req.body.title,
-    genre: genres,
-    numberInStock: req.body.numberInStock,
-    dailyRentalRate: req.body.dailyRentalRate,
+router.put(
+  '/:id',
+  [validateMovie, transformGenres, buildMovieObjectToPost],
+  async (req: Request, res: Response) => {
+    const id = req.params.id
+
+    try {
+      const result = await controller.updateMovie(id, req.body.movie)
+      return res.status(200).send(`Movie ${result?.title} updated!`)
+    } catch (error) {
+      console.error(error)
+      return res.status(500).send('Unknown error')
+    }
   }
-
-  try {
-    const result = await controller.createMovie(newMovie)
-    return res.status(200).send(`Movie ${result.title} added!`)
-  } catch (error) {
-    console.error(error)
-    return res.status(500).send('Unknown error')
-  }
-})
-
-router.put('/:id', async (req, res) => {
-  const id = req.params.id
-
-  const { error } = validateMovie(req.body)
-  if (error) return res.status(400).send(error.details.map((e) => e.message))
-
-  let genres = []
-
-  try {
-    genres = await Genre.find({
-      _id: { $in: req.body.genreIds },
-    }).select('_id name')
-
-    if (!genres || genres.length !== req.body.genreIds.length)
-      return res.status(400).send('Invalid genre')
-  } catch (error) {
-    return res.status(400).send('Invalid genre')
-  }
-
-  const movieToUpdate = {
-    title: req.body.title,
-    genre: genres,
-    numberInStock: req.body.numberInStock,
-    dailyRentalRate: req.body.dailyRentalRate,
-  }
-
-  try {
-    const result = await controller.updateMovie(id, movieToUpdate)
-    return res.status(200).send(`Movie ${result?.title} updated!`)
-  } catch (error) {
-    console.error(error)
-    return res.status(500).send('Unknown error')
-  }
-})
+)
 
 router.delete('/:id', async (req, res) => {
   const id = req.params.id

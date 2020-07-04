@@ -1,6 +1,6 @@
 import Joi from '@hapi/joi'
 
-const validateMovie = (movie: any) => {
+const joiValidation = (movie: any) => {
   const schema = Joi.object({
     title: Joi.string().min(2).max(255).required(),
     genreIds: Joi.array().items(Joi.string()).required(),
@@ -11,4 +11,4 @@ const validateMovie = (movie: any) => {
   return { error, value }
 }
 
-export default validateMovie
+export default joiValidation
