@@ -44,3 +44,4 @@ const genreSchema: Schema = new Schema(
 const Genre = model<IGenre>('Genre', genreSchema)
 
 export default Genre
+export { genreSchema }
