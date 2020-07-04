@@ -55,7 +55,7 @@ router.put(
   }
 )
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req: Request, res: Response) => {
   const id = req.params.id
 
   try {

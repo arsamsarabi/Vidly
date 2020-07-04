@@ -1,17 +1,17 @@
-import express from 'express'
+import express, { Request, Response } from 'express'
 
-import validateGenre from './validation'
 import controller from './controller'
 import parseError from './errorHandler'
+import { validateGenre } from './middlewares'
 
 const router = express.Router()
 
-router.get('/', async (req, res) => {
+router.get('/', async (req: Request, res: Response) => {
   const genres = await controller.getAllGenres()
   res.send(genres)
 })
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req: Request, res: Response) => {
   const id = req.params.id
   const genre = await controller.getGenreById(id)
 
@@ -21,15 +21,9 @@ router.get('/:id', async (req, res) => {
   return res.send(genre)
 })
 
-router.post('/', async (req, res) => {
-  const { name } = req.body
-  const newGenre = { name }
-
-  const { error } = validateGenre(newGenre)
-  if (error) return res.status(400).send(error.details.map((e) => e.message))
-
+router.post('/', validateGenre, async (req: Request, res: Response) => {
   try {
-    const result = await controller.createGenre(newGenre)
+    const result = await controller.createGenre(req.body)
     return res.status(200).send(`Genre ${result.name} added!`)
   } catch (error) {
     const { code, message } = parseError(error)
@@ -37,16 +31,10 @@ router.post('/', async (req, res) => {
   }
 })
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', validateGenre, async (req: Request, res: Response) => {
   const id = req.params.id
-  const { name } = req.body
-  const newGenre = { name }
-
-  const { error } = validateGenre(newGenre)
-  if (error) return res.status(400).send(error.details.map((e) => e.message))
-
   try {
-    const result = await controller.updateGenre(id, newGenre)
+    const result = await controller.updateGenre(id, req.body)
     return res.status(200).send(`Genre ${result?.name} updated!`)
   } catch (error) {
     const { code, message } = parseError(error)
@@ -54,7 +42,7 @@ router.put('/:id', async (req, res) => {
   }
 })
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req: Request, res: Response) => {
   const id = req.params.id
 
   try {

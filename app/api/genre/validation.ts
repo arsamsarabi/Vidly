@@ -4,10 +4,10 @@ const schema = Joi.object({
   name: Joi.string().min(3).max(50).required(),
 })
 
-const validateGenre = (genre: any) => {
+const joiValidation = (genre: any) => {
   const { error, value } = schema.validate(genre)
   return { error, value }
 }
 
-export default validateGenre
+export default joiValidation
 export { schema as genreSchema }
