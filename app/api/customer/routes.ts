@@ -1,17 +1,17 @@
-import express from 'express'
+import express, { Request, Response } from 'express'
 
-import validateCustomer from './validation'
 import controller from './controller'
 import parseError from './errorHandler'
+import { validateCustomer } from './middlewares'
 
 const router = express.Router()
 
-router.get('/', async (req, res) => {
+router.get('/', async (_: Request, res: Response) => {
   const customers = await controller.getAllCustomers()
   res.send(customers)
 })
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req: Request, res: Response) => {
   const id = req.params.id
   const customer = await controller.getCustomerById(id)
 
@@ -21,15 +21,9 @@ router.get('/:id', async (req, res) => {
   return res.send(customer)
 })
 
-router.post('/', async (req, res) => {
-  const { name, phone, isGold } = req.body
-  const newCustomer = { name, phone, isGold }
-
-  const { error } = validateCustomer(newCustomer)
-  if (error) return res.status(400).send(error.details.map((e) => e.message))
-
+router.post('/', validateCustomer, async (req: Request, res: Response) => {
   try {
-    const result = await controller.createCustomer(newCustomer)
+    const result = await controller.createCustomer(req.body)
     return res.status(200).send(`Customer ${result.name} added!`)
   } catch (error) {
     const { code, message } = parseError(error)
@@ -37,16 +31,10 @@ router.post('/', async (req, res) => {
   }
 })
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', validateCustomer, async (req: Request, res: Response) => {
   const id = req.params.id
-  const { name, phone, isGold } = req.body
-  const newCustomer = { name, phone, isGold }
-
-  const { error } = validateCustomer(newCustomer)
-  if (error) return res.status(400).send(error.details.map((e) => e.message))
-
   try {
-    const result = await controller.updateCustomer(id, newCustomer)
+    const result = await controller.updateCustomer(id, req.body)
     return res.status(200).send(`Customer ${result?.name} updated!`)
   } catch (error) {
     const { code, message } = parseError(error)
@@ -54,7 +42,7 @@ router.put('/:id', async (req, res) => {
   }
 })
 
-router.delete('/:id', async (req, res) => {
+router.delete('/:id', async (req: Request, res: Response) => {
   const id = req.params.id
 
   try {

@@ -6,7 +6,7 @@ import { validateGenre } from './middlewares'
 
 const router = express.Router()
 
-router.get('/', async (req: Request, res: Response) => {
+router.get('/', async (_: Request, res: Response) => {
   const genres = await controller.getAllGenres()
   res.send(genres)
 })
