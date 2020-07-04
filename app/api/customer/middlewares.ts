@@ -1,12 +1,8 @@
-import * as express from 'express'
+import { Request, Response } from 'express'
 
 import joiValidation from './validation'
 
-export const validateCustomer = (
-  req: express.Request,
-  res: express.Response,
-  next: any
-) => {
+export const validateCustomer = (req: Request, res: Response, next: any) => {
   const { error } = joiValidation(req.body)
   if (error) return res.status(400).send(error.details.map((e) => e.message))
 

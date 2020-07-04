@@ -42,3 +42,7 @@ const movieSchema: Schema = new Schema(
 const Movie = model<IMovie>('Movie', movieSchema)
 
 export default Movie
+
+export const isMovie = (obj: any): obj is IMovie => {
+  return (<IMovie>obj).title !== undefined
+}

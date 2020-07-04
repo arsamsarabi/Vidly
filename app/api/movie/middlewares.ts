@@ -1,21 +1,17 @@
-import * as express from 'express'
+import { Request, Response } from 'express'
 
 import Genre from '#root/db/models/Genre'
 import joiValidation from './validation'
 
-export const validateMovie = (
-  req: express.Request,
-  res: express.Response,
-  next: any
-) => {
+export const validateMovie = (req: Request, res: Response, next: any) => {
   const { error } = joiValidation(req.body)
   if (error) return res.status(400).send(error.details.map((e) => e.message))
   return next()
 }
 
 export const transformGenres = async (
-  req: express.Request,
-  res: express.Response,
+  req: Request,
+  res: Response,
   next: any
 ) => {
   let genres = []
@@ -38,8 +34,8 @@ export const transformGenres = async (
 }
 
 export const buildMovieObjectToPost = (
-  req: express.Request,
-  _: express.Response,
+  req: Request,
+  _: Response,
   next: any
 ) => {
   const movie = {
