@@ -12,6 +12,11 @@ import routes from './routes'
 const { NODE_ENV = 'development' } = process.env
 const port: number = config.get('port')
 
+if (!config.get('jwtPrivateKey')) {
+  log('FATAL ERROR: jwtPrivateKey is not defined.')
+  process.exit(1)
+}
+
 const app = express()
 
 app.set('view engine', 'pug')
@@ -22,7 +27,6 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.static('public'))
 app.use(helmet())
 if (NODE_ENV === 'development') {
-  log('Morgan enabled...')
   app.use(morgan('tiny'))
 }
 app.use(auth)
