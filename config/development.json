@@ -6,5 +6,8 @@
   },
   "db": {
     "url": "mongodb://localhost:27017/vidly"
+  },
+  "const": {
+    "authHeader": "x-dev-auth-header"
   }
 }

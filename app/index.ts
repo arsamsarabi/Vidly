@@ -4,8 +4,6 @@ import helmet from 'helmet'
 import morgan from 'morgan'
 import config from 'config'
 
-import auth from './middlewares/auth'
-import logger from './middlewares/logger'
 import { appDebugger as log } from './utils/debuggers'
 import routes from './routes'
 
@@ -29,8 +27,6 @@ app.use(helmet())
 if (NODE_ENV === 'development') {
   app.use(morgan('tiny'))
 }
-app.use(auth)
-app.use(logger)
 
 // Configuration
 log(`Application name: ${config.get('name')}`)

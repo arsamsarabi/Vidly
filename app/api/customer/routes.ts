@@ -1,12 +1,13 @@
 import express, { Request, Response } from 'express'
 
+import authMiddleware from '#root/middlewares/auth'
 import controller from './controller'
 import parseError from './errorHandler'
 import { validateCustomer } from './middlewares'
 
 const router = express.Router()
 
-router.get('/', async (_: Request, res: Response) => {
+router.get('/', authMiddleware, async (_: Request, res: Response) => {
   const customers = await controller.getAllCustomers()
   res.send(customers)
 })

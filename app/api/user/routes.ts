@@ -1,4 +1,5 @@
 import express, { Request, Response } from 'express'
+import config from 'config'
 
 import controller from './controller'
 import { validateRegistration } from './middlewares'
@@ -11,7 +12,7 @@ router.post('/', validateRegistration, async (req: Request, res: Response) => {
     const token = user.generateAuthToken()
 
     return res
-      .header('x-auth-token', token)
+      .header(config.get('const.authHeader'), token)
       .status(200)
       .send({
         ok: true,
