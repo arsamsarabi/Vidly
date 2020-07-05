@@ -10,8 +10,7 @@ const registerUser = async (requestData: IUser) => {
   user.password = await bcrypt.hash(user.password, salt)
 
   await user.save()
-  const result = pick(user, ['_id', 'name', 'email'])
-  return result
+  return user
 }
 
 export default {

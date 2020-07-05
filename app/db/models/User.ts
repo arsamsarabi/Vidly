@@ -1,9 +1,12 @@
 import { Schema, model, Document } from 'mongoose'
+import jwt from 'jsonwebtoken'
+import config from 'config'
 
 export interface IUser extends Document {
   name: string
   password: string
   email: string
+  generateAuthToken(): string
 }
 
 const userSchema: Schema = new Schema(
@@ -34,6 +37,16 @@ const userSchema: Schema = new Schema(
     timestamps: true,
   }
 )
+
+userSchema.methods.generateAuthToken = function () {
+  const userDataToSign = {
+    _id: this._id,
+    name: this.name,
+    email: this.email,
+  }
+  const token = jwt.sign(userDataToSign, config.get('jwtPrivateKey'))
+  return token
+}
 
 const User = model<IUser>('User', userSchema)
 
